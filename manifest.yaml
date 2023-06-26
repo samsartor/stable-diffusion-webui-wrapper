@@ -1,13 +1,13 @@
 # Example written in yaml (toml and json are also acceptable)
 
 # The package identifier used by the OS. This must be unique amongst all other known packages
-id: hello-world 
+id: stable-diffusion 
  # A human readable service title
-title: "Hello World"
+title: "Stable Diffusion"
 # Service version - accepts up to four digits, where the last confirms to revisions necessary for EmbassyOS - see documentation: https://github.com/Start9Labs/emver-rs. This value will change with each release of the service. 
-version: 1.0.0.1
+version: 0.0.0.1
 # Release notes for the update - can be a string, paragraph or URL
-release-notes: "Revamped for EmabssyOS 0.3.3"
+release-notes: "TODO"
 # The type of license for the project. Include the LICENSE in the root of the project directory. A license is required for a Start9 package.
 license: mit
 # The Start9 wrapper repository URL for the package. This repo contains the manifest file (this), any scripts necessary for configuration, backups, actions, or health checks (more below). This key must exist. But could be embedded into the source repository. 
@@ -57,13 +57,23 @@ main:
   # Identifier for the main image volume, which will be used when other actions need to mount to this volume.
   image: main
   # The executable binary for starting the initialization action. For docker actions, this is typically a "docker_entrypoint.sh" file. See the Dockerfile and the docker_entrypoint.sh in this project for additional details.
-  entrypoint: "docker_entrypoint.sh"
+  entrypoint: "/docker/entrypoint.sh"
   # Any arguments that should be passed into the entrypoint executable 
-  args: []
+  args:
+    - python
+    - -u
+    - webui.py
+    - --listen
+    - --port=7860
+    - --no-half
+    - --precision=full
+    - --allow-code
+    - --enable-insecure-extension-access
+    - --api
   # Specifies where to mount the data volume(s), if there are any. Mounts for pointer dependency volumes are also denoted here. These are necessary if data needs to be read from / written to these volumes. 
   mounts:
     # Specifies where on the service's file system its persistence directory should be mounted prior to service startup
-    main: /root
+    models: /stable-diffusion-webui/models
 # This is where health checks would be defined - see a more advanced example in https://github.com/Start9Labs/embassy-pages-wrapper
 health-checks: {}
 config: ~
@@ -71,9 +81,9 @@ properties: ~
 #  type: script
 # This denotes any data, asset, or pointer volumes that should be connected when the "docker run" command is invoked
 volumes:
-  # This is the image where files from the project asset directory will go
-  main:
+  models:
     type: data
+  # This is the image where files from the project asset directory will go
 # This specifies how to configure the port mapping for exposing the service over TOR and LAN (if applicable). Many interfaces can be specified depending on the needs of the service. If it can be launched over a Local Area Network connection, specify a `lan-config`. Otherwise, at minimum, a `tor-config` must be specified.
 interfaces:
   # This key is the internal name that the OS will use to configure the interface
@@ -85,12 +95,12 @@ interfaces:
     tor-config:
     # Port mappings are from the external port to the internal container port
       port-mapping:
-        80: "80"
+        80: "7860"
     # Port mappings are from the external port to the internal container port
     lan-config:
       443:
         ssl: true
-        internal: 80
+        internal: 7860
     # Denotes if the service has a user interface to display
     ui: true
     # Denotes the protocol specifications used by this interface
@@ -120,7 +130,7 @@ backup:
       # BACKUP is the default volume that is used for backups. This is whatever backup drive is mounted to the device, or a network filesystem.  
       # The value here donates where the mount point will be. The backup drive is mounted to this location.
       BACKUP: "/mnt/backup" 
-      main: "/root/data"
+      #main: "/root/data"
   # The action to execute the backup restore functionality. Details for the keys below are the same as above.
   restore:
     type: docker
@@ -134,7 +144,7 @@ backup:
       - /root/data
     mounts:
       BACKUP: "/mnt/backup"
-      main: "/root/data"
+      #main: "/root/data"
 migrations:
   from:
     "*":
