@@ -1,9 +1,6 @@
-[submodule "hello-world"]
-	path = hello-world
-	url = https://github.com/Start9Labs/hello-world
 [submodule "stable-diffusion-webui-docker"]
 	path = stable-diffusion-webui-docker
 	url = git@github.com:AbdBarho/stable-diffusion-webui-docker.git
 [submodule "stable-diffusion-webui"]
 	path = stable-diffusion-webui
-	url = git@github.com:AUTOMATIC1111/stable-diffusion-webui.git
+	url = git@github.com:jbaboval/stable-diffusion-webui.git

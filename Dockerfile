@@ -1,11 +1,17 @@
-FROM alpine:3.17
+FROM intel/intel-extension-for-pytorch:xpu-flex
 
-RUN apk update
-RUN apk add --no-cache tini && \
-    rm -f /var/cache/apk/*
+RUN apt-get update && \
+    apt-get install -y git libgl1 libgl1-mesa-dri libglib2.0-0 && \
+    rm -rf /var/lib/apt/lists
 
-ARG ARCH
-ADD ./hello-world/target/${ARCH}-unknown-linux-musl/release/hello-world /usr/local/bin/hello-world
-RUN chmod +x /usr/local/bin/hello-world
-ADD ./docker_entrypoint.sh /usr/local/bin/docker_entrypoint.sh
-RUN chmod a+x /usr/local/bin/docker_entrypoint.sh
+ADD ./stable-diffusion-webui/requirements_versions.txt /stable-diffusion-webui/requirements_versions.txt
+WORKDIR /stable-diffusion-webui
+RUN pip install -r requirements_versions.txt
+ADD ./stable-diffusion-webui/modules/paths_internal.py /stable-diffusion-webui/modules/paths_internal.py
+ADD ./stable-diffusion-webui/modules/cmd_args.py /stable-diffusion-webui/modules/cmd_args.py
+ADD ./stable-diffusion-webui/launch.py /stable-diffusion-webui/launch.py
+RUN python launch.py --exit --skip-torch-cuda-test
+RUN rm -r repositories/*/.git
+
+ADD ./stable-diffusion-webui /stable-diffusion-webui
+ADD --chmod=755 ./docker_entrypoint.sh /usr/local/bin/docker_entrypoint.sh
