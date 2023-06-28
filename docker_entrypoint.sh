@@ -19,5 +19,7 @@ ln -s /data/config
 python -u webui.py \
   --listen --port=7860 \
   --use-intel-oneapi \
+  --precision full --no-half \
   --allow-code --enable-insecure-extension-access --api \
   --ui-settings-file config/config.json --ui-config-file config/ui-config.json
+  # --use-cpu all \

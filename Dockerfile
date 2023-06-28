@@ -7,6 +7,7 @@ RUN apt-get update && \
 ADD ./stable-diffusion-webui/requirements_versions.txt /stable-diffusion-webui/requirements_versions.txt
 WORKDIR /stable-diffusion-webui
 RUN pip install -r requirements_versions.txt
+RUN pip install torch==1.13.0a0+git6c9b55e torchvision==0.14.1a0 intel_extension_for_pytorch==1.13.120+xpu -f https://developer.intel.com/ipex-whl-stable-xpu
 ADD ./stable-diffusion-webui/modules/paths_internal.py /stable-diffusion-webui/modules/paths_internal.py
 ADD ./stable-diffusion-webui/modules/cmd_args.py /stable-diffusion-webui/modules/cmd_args.py
 ADD ./stable-diffusion-webui/launch.py /stable-diffusion-webui/launch.py
