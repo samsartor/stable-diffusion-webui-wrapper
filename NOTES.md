@@ -1,0 +1,2 @@
+- If you turn up the batch size, the service will run out of RAM and crash
+- First startup can take a long time because the model is downloading
