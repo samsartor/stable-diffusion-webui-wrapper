@@ -2,24 +2,22 @@
 
 cd /stable-diffusion-webui
 
-mkdir -p /data/models
-rsync -ru ./models /data/models
-rm -r ./models
-ln -s /data/models
+mkdir -p /mnt/files/models
+rsync -ru ./models_init/ /mnt/files/models/
+ln -s /mnt/files/models
 
-mkdir -p /data/log
-ln -s /data/log
+mkdir -p /mnt/files/saved
+mkdir -p log
+ln -s /mnt/files/saved log/images
 
-mkdir -p /data/outputs
-ln -s /data/outputs
-
-mkdir -p /data/config
-ln -s /data/config
+mkdir -p /mnt/files/outputs
+ln -s /mnt/files/outputs
 
 python -u webui.py \
   --listen --port=7860 \
-  --use-intel-oneapi \
   --precision full --no-half \
   --allow-code --enable-insecure-extension-access --api \
-  --ui-settings-file config/config.json --ui-config-file config/ui-config.json
-  # --use-cpu all \
+  --ui-settings-file /data/config.json --ui-config-file /data/ui-config.json \
+  --hide_ui_dir_config true \
+  --use-cpu all
+# --use-intel-oneapi

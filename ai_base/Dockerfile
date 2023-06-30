@@ -19,13 +19,14 @@ RUN cd ~ && \
     bash 2023.1-linux-hotfix/installpatch.sh
 
 # Compile the specific IPEX version we need, this takes a very long time
-ADD --chmod=755 ./ipex_*_bundle.sh /ipex/
+ADD --chmod=755 ./ipex_prepare_bundle.sh /ipex/prepare_bundle.sh
+ADD --chmod=755 ./ipex_compile_bundle.sh /ipex/compile_bundle.sh
 WORKDIR /ipex
 RUN ./prepare_bundle.sh ${IPEX_REVISION} /opt/intel/oneapi/compiler/latest /opt/intel/oneapi/mkl/latest ${AOT_DEVICES}
 RUN ./compile_bundle.sh ${IPEX_REVISION} /opt/intel/oneapi/compiler/latest /opt/intel/oneapi/mkl/latest ${AOT_DEVICES}
 		
-# Reset to Intel's default IPEX container
-FROM intel/intel-extension-for-pytorch:xpu-flex as compile
+# Reset all the build dependency stuff
+FROM intel/intel-extension-for-pytorch:xpu-flex
 
 # Copy over the compiled python packages
 COPY --from=compile /usr/local/lib/python3.10/dist-packages/ /usr/local/lib/python3.10/dist-packages/
