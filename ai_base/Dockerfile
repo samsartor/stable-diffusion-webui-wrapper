@@ -1,11 +1,11 @@
+# Start with Intel's own IPEX container
+FROM intel/intel-extension-for-pytorch:xpu-flex as compile
+
 # We need to support the Comet Lake iGPU
 ARG AOT_DEVICES=cml
 
 # Pin to a specific IPEX version
 ARG IPEX_REVISION=b7412a424a7f4cf048efcf4c20fabd9b311ae369
-
-# Start with Intel's own IPEX container
-FROM intel/intel-extension-for-pytorch:xpu-flex as compile
 
 # Install the dependencies needed to compile IPEX
 RUN apt-get update && \
@@ -19,10 +19,8 @@ RUN cd ~ && \
     bash 2023.1-linux-hotfix/installpatch.sh
 
 # Compile the specific IPEX version we need, this takes a very long time
-ADD --chmod=755 ./ipex_prepare_bundle.sh /ipex/prepare_bundle.sh
 ADD --chmod=755 ./ipex_compile_bundle.sh /ipex/compile_bundle.sh
 WORKDIR /ipex
-RUN ./prepare_bundle.sh ${IPEX_REVISION} /opt/intel/oneapi/compiler/latest /opt/intel/oneapi/mkl/latest ${AOT_DEVICES}
 RUN ./compile_bundle.sh ${IPEX_REVISION} /opt/intel/oneapi/compiler/latest /opt/intel/oneapi/mkl/latest ${AOT_DEVICES}
 		
 # Reset all the build dependency stuff

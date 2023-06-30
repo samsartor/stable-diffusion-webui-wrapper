@@ -1,0 +1,53 @@
+From 1f6f970e1d0528059984e9b1fa07ca9bdffb55df Mon Sep 17 00:00:00 2001
+From: Sam Sartor <me@samsartor.com>
+Date: Fri, 30 Jun 2023 17:12:39 -0600
+Subject: [PATCH] paches for start9
+
+---
+ javascript/ui.js  | 1 +
+ modules/shared.py | 2 +-
+ webui.py          | 3 ++-
+ 3 files changed, 4 insertions(+), 2 deletions(-)
+
+diff --git a/javascript/ui.js b/javascript/ui.js
+index bfe31525..15949c56 100644
+--- a/javascript/ui.js
++++ b/javascript/ui.js
+@@ -238,6 +238,7 @@ function restoreProgressImg2img(x){
+ onUiLoaded(function () {
+     showRestoreProgressButton('txt2img', localStorage.getItem("txt2img_task_id"))
+     showRestoreProgressButton('img2img', localStorage.getItem("img2img_task_id"))
++    gradioApp().getElementById(tabname + "_restore_progress").click()
+ });
+ 
+ 
+diff --git a/modules/shared.py b/modules/shared.py
+index 8205f6a8..9537ce9e 100644
+--- a/modules/shared.py
++++ b/modules/shared.py
+@@ -289,7 +289,7 @@ options_templates.update(options_section(('saving-paths', "Paths for saving"), {
+     "outdir_grids": OptionInfo("", "Output directory for grids; if empty, defaults to two directories below", component_args=hide_dirs),
+     "outdir_txt2img_grids": OptionInfo("outputs/txt2img-grids", 'Output directory for txt2img grids', component_args=hide_dirs),
+     "outdir_img2img_grids": OptionInfo("outputs/img2img-grids", 'Output directory for img2img grids', component_args=hide_dirs),
+-    "outdir_save": OptionInfo("log/images", "Directory for saving images using the Save button", component_args=hide_dirs),
++    "outdir_save": OptionInfo("saved", "Directory for saving images using the Save button", component_args=hide_dirs),
+     "outdir_init_images": OptionInfo("outputs/init-images", "Directory for saving init images when using img2img", component_args=hide_dirs),
+ }))
+ 
+diff --git a/webui.py b/webui.py
+index 3c7f6555..4fecd3ca 100644
+--- a/webui.py
++++ b/webui.py
+@@ -329,7 +329,8 @@ def webui():
+             debug=cmd_opts.gradio_debug,
+             auth=[tuple(cred.split(':')) for cred in gradio_auth_creds] if gradio_auth_creds else None,
+             inbrowser=cmd_opts.autolaunch,
+-            prevent_thread_lock=True
++            prevent_thread_lock=True,
++            favicon_path="icon.png",
+         )
+         # after initial launch, disable --autolaunch for subsequent restarts
+         cmd_opts.autolaunch = False
+-- 
+2.36.0
+

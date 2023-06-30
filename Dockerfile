@@ -1,7 +1,7 @@
-FROM intel/intel-extension-for-pytorch:xpu-flex
+FROM start9/ai-base:latest
 
 RUN apt-get update && \
-    apt-get install -y libgl1 libgl1-mesa-dri libglib2.0-0 && \
+    apt-get install -y git libgl1 libgl1-mesa-dri libglib2.0-0 && \
     rm -rf /var/lib/apt/lists
 
 ADD ./stable-diffusion-webui/requirements_versions.txt /stable-diffusion-webui/requirements_versions.txt
@@ -14,6 +14,8 @@ RUN python launch.py --exit --skip-torch-cuda-test
 RUN rm -r repositories/*/.git
 
 ADD ./stable-diffusion-webui /stable-diffusion-webui
+ADD webui.patch webui.patch
+RUN patch -p1 webui.patch
 ADD ./icon.png icon.png
 RUN mv models models_init
 ADD --chmod=755 ./docker_entrypoint.sh /usr/local/bin/docker_entrypoint.sh

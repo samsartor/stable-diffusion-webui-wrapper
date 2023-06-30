@@ -4,3 +4,4 @@ scripts/*.js
 .DS_Store
 .vscode/
 docker-images
+assets/default-models

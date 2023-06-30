@@ -40,13 +40,17 @@ rebranding:
 	@echo; echo "Note: Rebranding code has been commented out in Makefile"; echo
 # END REBRANDING
 
+assets/default-models/Stable-Diffusion/v1-5-pruned-emaonly.safetensors:
+	mkdir -p $(dir $@)
+	wget https://huggingface.co/runwayml/stable-diffusion-v1-5/resolve/main/v1-5-pruned-emaonly.safetensors -O $@
+
 scripts/embassy.js: $(TS_FILES)
 	deno bundle scripts/embassy.ts scripts/embassy.js
 
-docker-images/x86_64.tar: stable-diffusion-webui/**/* docker_entrypoint.sh Dockerfile
+docker-images/x86_64.tar: manifest.yaml stable-diffusion-webui/**/* docker_entrypoint.sh Dockerfile
 	mkdir -p docker-images
-	docker buildx build --memory 4g --tag start9/$(PKG_ID)/main:$(PKG_VERSION) --platform=linux/amd64 -o type=docker,dest=docker-images/x86_64.tar .
+	docker buildx build --tag start9/$(PKG_ID)/main:$(PKG_VERSION) --platform=linux/amd64 -o type=docker,dest=docker-images/x86_64.tar .
 
-$(PKG_ID).s9pk: manifest.yaml instructions.md icon.png LICENSE scripts/embassy.js docker-images/x86_64.tar
+$(PKG_ID).s9pk: manifest.yaml instructions.md icon.png LICENSE scripts/embassy.js docker-images/x86_64.tar assets/**/*
 	@echo "embassy-sdk: Preparing x86_64 package ..."
 	@embassy-sdk pack

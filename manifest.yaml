@@ -7,6 +7,7 @@ license: MIT/A-GPL/RAIL-M
 wrapper-repo: "https://github.com/samsartor/stable-diffusion-webui-wrapper"
 upstream-repo: "https://github.com/AUTOMATIC1111/stable-diffusion-webui"
 support-site: "https://github.com/AUTOMATIC1111/stable-diffusion-webui/wiki"
+marketing-site: "https://github.com/AUTOMATIC1111/stable-diffusion-webui/wiki/Features"
 build: ["make"]
 description:
   short: An AI image generator.
@@ -23,6 +24,7 @@ main:
   args: []
   mounts:
     main: /data
+    default-models: /mnt/default-models
     filebrowser: /mnt/files
   # Allow GPU acess via /dev/dri
   gpu-acceleration: true
@@ -36,6 +38,8 @@ properties: ~
 volumes:
   main:
     type: data
+  default-models:
+    type: assets
   filebrowser:
     package-id: "filebrowser"
     path: /data/stable-diffusion-webui
