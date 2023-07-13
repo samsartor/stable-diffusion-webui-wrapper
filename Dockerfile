@@ -1,7 +1,7 @@
 FROM start9/ai-base:latest
 
 RUN apt-get update && \
-    apt-get install -y git libgl1 libgl1-mesa-dri libglib2.0-0 && \
+    apt-get install -y git libgl1 libgl1-mesa-dri libglib2.0-0 tini && \
     rm -rf /var/lib/apt/lists
 
 ADD ./stable-diffusion-webui/requirements_versions.txt /stable-diffusion-webui/requirements_versions.txt

@@ -13,7 +13,7 @@ ln -s /mnt/files/saved
 mkdir -p /mnt/files/outputs
 ln -s /mnt/files/outputs
 
-python -u webui.py \
+exec tini -- python -u webui.py \
   --listen --port=7860 \
   --precision full --no-half \
   --allow-code --enable-insecure-extension-access --api \

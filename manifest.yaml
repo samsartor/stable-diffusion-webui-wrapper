@@ -1,5 +1,5 @@
 id: stable-diffusion-webui
-title: "Stable Diffusion WebUI"
+title: "Stable Diffusion"
 version: 1.1.1.0
 # Release notes for the update - can be a string, paragraph or URL
 release-notes: "TODO"
@@ -73,15 +73,15 @@ backup:
   create:
     type: docker
     image: compat
-    system: true 
-    entrypoint: compat 
+    system: true
+    entrypoint: compat
     args:
       - duplicity
       - create
       - /mnt/backup
       - /mnt/files
     mounts:
-      BACKUP: "/mnt/backup" 
+      BACKUP: "/mnt/backup"
       filebrowser: "/mnt/files"
   restore:
     type: docker
