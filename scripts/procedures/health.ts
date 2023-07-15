@@ -4,7 +4,7 @@ export const health: T.ExpectedExports.health = {
   // Checks that the server is running and reachable via http
   // deno-lint-ignore require-await
   async "webui"(effects, duration) {
-	  const errorValue = guardDurationAboveMinimum({ duration, minimumTime: 30_000 });
+	  const errorValue = guardDurationAboveMinimum({ duration, minimumTime: 60_000 });
 		if (errorValue) {
 			return errorValue;
 		}

@@ -2,6 +2,8 @@ PKG_ID := $(shell yq e ".id" manifest.yaml)
 PKG_VERSION := $(shell yq e ".version" manifest.yaml)
 TS_FILES := $(shell find ./ -name \*.ts)
 
+DEFAULT_MODEL := v2-1_768-ema-pruned.safetensors
+
 # delete the target of a rule if it has changed and its recipe exits with a nonzero exit status
 .DELETE_ON_ERROR:
 
@@ -40,9 +42,9 @@ rebranding:
 	@echo; echo "Note: Rebranding code has been commented out in Makefile"; echo
 # END REBRANDING
 
-assets/default-models/Stable-Diffusion/v1-5-pruned-emaonly.safetensors:
+assets/default-models/Stable-diffusion/$(DEFAULT_MODEL):
 	mkdir -p $(dir $@)
-	wget https://huggingface.co/runwayml/stable-diffusion-v1-5/resolve/main/v1-5-pruned-emaonly.safetensors -O $@
+	wget https://huggingface.co/stabilityai/stable-diffusion-2-1/resolve/main/$(notdir $@) -O $@
 
 scripts/embassy.js: $(TS_FILES)
 	deno bundle scripts/embassy.ts scripts/embassy.js
@@ -51,6 +53,6 @@ docker-images/x86_64.tar: manifest.yaml stable-diffusion-webui/**/* docker_entry
 	mkdir -p docker-images
 	docker buildx build --tag start9/$(PKG_ID)/main:$(PKG_VERSION) --platform=linux/amd64 -o type=docker,dest=docker-images/x86_64.tar .
 
-$(PKG_ID).s9pk: manifest.yaml instructions.md icon.png LICENSE scripts/embassy.js docker-images/x86_64.tar assets/**/*
+$(PKG_ID).s9pk: manifest.yaml instructions.md icon.png LICENSE scripts/embassy.js docker-images/x86_64.tar assets/default-models/Stable-diffusion/$(DEFAULT_MODEL)
 	@echo "embassy-sdk: Preparing x86_64 package ..."
 	@embassy-sdk pack

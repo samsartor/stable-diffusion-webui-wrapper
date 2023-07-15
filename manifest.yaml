@@ -33,6 +33,17 @@ health-checks:
     name: "WebUI"
     success-message: "Ready to visit Stable Diffusion in a web browser"
     type: "script"
+  memory:
+    name: Memory Usage
+    success-message: System has enough memory
+    type: docker
+    image: main
+    system: false
+    entrypoint: check-mem.py
+    args: []
+    mounts: {}
+    io-format: yaml
+    inject: true
 config: ~
 properties: ~
 volumes:
@@ -42,7 +53,7 @@ volumes:
     type: assets
   filebrowser:
     package-id: "filebrowser"
-    path: /data/stable-diffusion-webui
+    path: /data/stable-diffusion
     readonly: false
     type: pointer
     volume-id: main

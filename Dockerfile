@@ -15,7 +15,7 @@ RUN rm -r repositories/*/.git
 
 ADD ./stable-diffusion-webui /stable-diffusion-webui
 ADD webui.patch webui.patch
-RUN patch -p1 webui.patch
+RUN patch -p1 < webui.patch
 ADD ./icon.png icon.png
 RUN mv models models_init
 ADD --chmod=755 ./docker_entrypoint.sh /usr/local/bin/docker_entrypoint.sh
