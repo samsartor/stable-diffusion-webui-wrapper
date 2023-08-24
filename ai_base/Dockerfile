@@ -5,18 +5,13 @@ FROM intel/intel-extension-for-pytorch:xpu-flex as compile
 ARG AOT_DEVICES=cml
 
 # Pin to a specific IPEX version
-ARG IPEX_REVISION=b7412a424a7f4cf048efcf4c20fabd9b311ae369
+ARG IPEX_REVISION=509a3789d7a6b1f67fda0b2b8b785a81d1ce221d
 
 # Install the dependencies needed to compile IPEX
+USER root
 RUN apt-get update && \
-    apt-get install -y git intel-oneapi-dpcpp-cpp-2023.1.0 intel-oneapi-mkl-devel pkg-config libpng-dev libjpeg-dev python3-dev && \
+    apt-get install -y git intel-oneapi-dpcpp-cpp-2023.2.0 intel-oneapi-mkl-devel pkg-config libpng-dev libjpeg-dev python3-dev && \
     rm -rf /var/lib/apt/lists
-
-# Patch the DPC++ compiler to support IPEX stuff
-RUN cd ~ && \
-    wget https://registrationcenter-download.intel.com/akdlm/IRC_NAS/89283df8-c667-47b0-b7e1-c4573e37bd3e/2023.1-linux-hotfix.zip && \
-    unzip 2023.1-linux-hotfix.zip && \
-    bash 2023.1-linux-hotfix/installpatch.sh
 
 # Compile the specific IPEX version we need, this takes a very long time
 ADD --chmod=755 ./ipex_compile_bundle.sh /ipex/compile_bundle.sh
