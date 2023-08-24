@@ -24,7 +24,6 @@ main:
   args: []
   mounts:
     main: /data
-    default-models: /mnt/default-models
     filebrowser: /mnt/files
   # Allow GPU acess via /dev/dri
   gpu-acceleration: true
@@ -49,8 +48,6 @@ properties: ~
 volumes:
   main:
     type: data
-  default-models:
-    type: assets
   filebrowser:
     package-id: "filebrowser"
     path: /data/stable-diffusion
