@@ -43,6 +43,17 @@ health-checks:
     mounts: {}
     io-format: yaml
     inject: true
+  download:
+    name: Model Download
+    success-message: Default model is downloaded
+    type: docker
+    image: main
+    system: false
+    entrypoint: check-download.py
+    args: []
+    mounts: {}
+    io-format: yaml
+    inject: true
 config: ~
 properties: ~
 volumes:

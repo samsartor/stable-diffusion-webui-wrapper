@@ -1,5 +1,7 @@
 #!/usr/bin/bash
 
+set -x
+
 # The root directory of the webui server
 cd /stable-diffusion-webui
 
@@ -10,8 +12,6 @@ rm -rf /mnt/files/models.tmp
 mv -T /mnt/files/models /mnt/files/models.tmp
 # Copy small README-style files from the webui directory
 rsync -ru ./models_init/. /mnt/files/models.tmp/
-# Copy the larger default model checkpoints, using cp since it supports reflink
-cp -au --reflink=auto /mnt/default-models/. /mnt/files/models.tmp/
 # Make the temporary directory official
 mv -T /mnt/files/models.tmp /mnt/files/models
 # Symlink the models directory into the webui directory where it is expected
@@ -23,9 +23,14 @@ for dir in saved outputs; do
   ln -s /mnt/files/$dir
 done
 
+# Start downloading the model in the background
+download-model.py \
+  'https://huggingface.co/stabilityai/stable-diffusion-2-1/resolve/main/v2-1_768-ema-pruned.safetensors' \
+  'dcd690123cfc64383981a31d955694f6acf2072a80537fdb612c8e58ec87a8ac' \
+  '/mnt/files/models/Stable-diffusion'
 
 # Start the webui server
-exec tini -- python -u webui.py \
+python -u webui.py \
   --listen --port=7860 \
   --precision full --no-half \
   --allow-code --enable-insecure-extension-access --api \

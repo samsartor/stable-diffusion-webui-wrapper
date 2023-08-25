@@ -19,3 +19,6 @@ RUN patch -p1 < webui.patch
 ADD ./icon.png icon.png
 RUN mv models models_init
 ADD --chmod=755 ./docker_entrypoint.sh /usr/local/bin/docker_entrypoint.sh
+ADD --chmod=755 ./check-mem.py /usr/local/bin/check-mem.py
+ADD --chmod=755 ./check-download.py /usr/local/bin/check-download.py
+ADD --chmod=755 ./download-model.py /usr/local/bin/download-model.py
