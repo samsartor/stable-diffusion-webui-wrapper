@@ -43,7 +43,7 @@ rebranding:
 scripts/embassy.js: $(TS_FILES)
 	deno bundle scripts/embassy.ts scripts/embassy.js
 
-docker-images/x86_64.tar: manifest.yaml stable-diffusion-webui/**/* docker_entrypoint.sh Dockerfile
+docker-images/x86_64.tar: manifest.yaml stable-diffusion-webui/**/* *.sh *.py Dockerfile
 	mkdir -p docker-images
 	docker buildx build --tag start9/$(PKG_ID)/main:$(PKG_VERSION) --platform=linux/amd64 -o type=docker,dest=docker-images/x86_64.tar .
 

@@ -25,12 +25,17 @@ done
 
 # Start downloading the model in the background
 download-model.py \
+  '/mnt/files/models/Stable-diffusion' \
   'https://huggingface.co/stabilityai/stable-diffusion-2-1/resolve/main/v2-1_768-ema-pruned.safetensors' \
   'dcd690123cfc64383981a31d955694f6acf2072a80537fdb612c8e58ec87a8ac' \
-  '/mnt/files/models/Stable-diffusion'
+  'stable-diffusion-v2_1.safetensors' \
+  'https://civitai.com/api/download/models/128713' \
+  '879db523c30d3b9017143d56705015e15a2cb5628762c11d086fed9538abd7fd' \
+  'dreamshaper-v8.safetensors'
 
 # Start the webui server
-python -u webui.py \
+exec tini -- \
+  python -u webui.py \
   --listen --port=7860 \
   --precision full --no-half \
   --allow-code --enable-insecure-extension-access --api \

@@ -5,14 +5,22 @@ import sys
 
 MINIMUM_MEM = 16
 MINIMUM_AVAIL = 1
-BYTES_IN_GB = 1024**3 # strictly wrong, but matches system info display
+BYTES_IN_GB = 1024**3 # should be GiB, but matches system info display
 
 def get_available_bytes():
 	meminfo = Path('/proc/meminfo').read_text()
+	active = None
+	total = None
 	for line in meminfo.split('\n'):
+		if ':' not in line:
+			continue
 		name, rest = line.split(':')
-		if name == 'MemAvailable':
-			return int(rest.strip().split(' ')[0]) * 1024
+		num = int(rest.strip().split(' ')[0]) * 1024
+		if name == 'Active(anon)':
+			active = num
+		if name == 'MemTotal':
+			total = num
+	return total - active
 
 def get_used_bytes():
 	stat = Path('/sys/fs/cgroup/memory.stat').read_text()
