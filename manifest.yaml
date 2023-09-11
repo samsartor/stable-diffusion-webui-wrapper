@@ -1,8 +1,11 @@
 id: stable-diffusion-webui
 title: "Stable Diffusion"
-version: 1.1.1.1
+version: 1.1.1.2
 # Release notes for the update - can be a string, paragraph or URL
-release-notes: "TODO"
+release-notes: |
+  * Added Dreamshaper v8 as a new default model
+  * Made the memory check more conservative
+  * Fixed service stopping
 license: MIT/A-GPL/RAIL-M
 wrapper-repo: "https://github.com/samsartor/stable-diffusion-webui-wrapper"
 upstream-repo: "https://github.com/AUTOMATIC1111/stable-diffusion-webui"
@@ -14,7 +17,7 @@ description:
   long: |
     Stable Diffusion is a generative model that can create new images based on text prompts,
     or similarly modify existing images. This application is like MidJourney or DALL-E 2 in concept,
-    but provides far more user control and runs entirely on the Embassy Pro private server.
+    but provides far more user control and runs entirely on the Server Pure.
 assets:
   license: LICENSE
   icon: icon.png
