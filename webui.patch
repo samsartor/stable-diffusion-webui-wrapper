@@ -51,3 +51,35 @@ index 3c7f6555..4fecd3ca 100644
 -- 
 2.36.0
 
+
+From f7cb69b371c5e9ef8cb4ccf3afee734ea936259f Mon Sep 17 00:00:00 2001
+From: Sam Sartor <me@samsartor.com>
+Date: Sat, 16 Sep 2023 16:31:52 -0400
+Subject: [PATCH] hide footgun elements
+
+---
+ style.css | 11 +++++++++++
+ 1 file changed, 11 insertions(+)
+
+diff --git a/style.css b/style.css
+index 3f56087a..efba269d 100644
+--- a/style.css
++++ b/style.css
+@@ -1,3 +1,14 @@
++/*
++   Hack to prevent width/height-batch-size from showing.
++   Because those are footguns on start9's pure server.
++ */
++#txt2img_column_size,
++#txt2img_dimensions_row,
++#img2img_column_size,
++#txt2img_batch_size,
++#img2img_batch_size {
++    display: none;
++}
+ 
+ /* general gradio fixes */
+ 
+-- 
+2.36.0
+

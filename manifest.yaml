@@ -1,11 +1,9 @@
 id: stable-diffusion-webui
 title: "Stable Diffusion"
-version: 1.1.1.2
+version: 1.1.1.3
 # Release notes for the update - can be a string, paragraph or URL
 release-notes: |
-  * Added Dreamshaper v8 as a new default model
-  * Made the memory check more conservative
-  * Fixed service stopping
+  * Initial release
 license: MIT/A-GPL/RAIL-M
 wrapper-repo: "https://github.com/samsartor/stable-diffusion-webui-wrapper"
 upstream-repo: "https://github.com/AUTOMATIC1111/stable-diffusion-webui"
@@ -32,6 +30,11 @@ main:
     filebrowser: /mnt/files
   # Allow GPU acess via /dev/dri
   gpu-acceleration: true
+hardware-requirements:
+  device:
+    display: CometLake
+  arch:
+    - x86_64
 health-checks:
   webui:
     name: "WebUI"

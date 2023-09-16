@@ -10,6 +10,8 @@ All generated images are logged to the `stable-diffusion/outputs` directory in t
 
 ## Additional Models
 
-The default Stable Diffusion model included with the service (v2.1) is generally quite good across a range of different styles and subjects, but you can get better results by choosing a model checkpoint finetuned with your specific goals in mind. [Civitai](https://civitai.com/) is an excellent source of such models. To install one, download your chosen ".safetensors" file and then upload it to the `stable-diffusion/models/Stable-diffusion` directory in the File Browser service. Note that ".ckpt" files can also work, but are much less secure and may damage your system.
+The default Stable Diffusion models included with the service (v2.1 and Dreamshaper v8) are generally quite good across a range of different styles and subjects, but you can get better results by choosing a model finetuned with your specific goals in mind. [Civitai](https://civitai.com/) is an excellent source of such models. To install one, download your chosen ".safetensors" file and then upload it to the `stable-diffusion/models/Stable-diffusion` directory in the File Browser service. Note that ".ckpt" files can also work, but are much less secure and may damage your system.
 
-Once the checkpoint file is uploaded, you can return to the Stable Diffusion user interface, press the refresh button (🔄) next to the "Stable Diffusion checkpoint" dropdown at the top, and then choose your desired model in the dropdown.
+You model should be based on "SD 1.5" or "SD 2.1". **No Stable Diffusion XL models are currently supported.**
+
+Once the model file is uploaded, you can return to the Stable Diffusion user interface, press the refresh button (🔄) next to the "Stable Diffusion model" dropdown at the top, and then choose your desired model in the dropdown.

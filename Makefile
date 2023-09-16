@@ -48,5 +48,5 @@ docker-images/x86_64.tar: manifest.yaml stable-diffusion-webui/**/* *.sh *.py Do
 	docker buildx build --tag start9/$(PKG_ID)/main:$(PKG_VERSION) --platform=linux/amd64 -o type=docker,dest=docker-images/x86_64.tar .
 
 $(PKG_ID).s9pk: manifest.yaml instructions.md icon.png LICENSE scripts/embassy.js docker-images/x86_64.tar
-	@echo "embassy-sdk: Preparing x86_64 package ..."
-	@embassy-sdk pack
+	@echo "start-sdk: Preparing x86_64 package ..."
+	@start-sdk pack
