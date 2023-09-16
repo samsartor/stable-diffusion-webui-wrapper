@@ -18,9 +18,8 @@ mv -T /mnt/files/models.tmp /mnt/files/models
 ln -s /mnt/files/models
 
 # Set up other persistant directories
-for dir in saved outputs extensions; do
+for dir in saved outputs; do
   mkdir -p /mnt/files/$dir
-  rsync -ru ./$dir_init/. /mnt/files/$dir
   ln -s /mnt/files/$dir
 done
 

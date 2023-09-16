@@ -25,11 +25,8 @@ ADD ./icon.png icon.png
 RUN wget -qO- https://github.com/Bing-su/adetailer/archive/refs/tags/v23.9.2.tar.gz | tar xz -C extensions-builtin
 RUN python extensions-builtin/adetailer-23.9.2/install.py
 
-# Create init directories to be copied to /mnt/files/ on startup
+# Create init directory to be copied to /mnt/files/ on startup
 RUN mv models models_init
-RUN mv extensions extensions_init
-RUN mkdir saved_init
-RUN mkdir outputs_init
 
 # Copy important scripts from the start9 wrapper repository
 ADD --chmod=755 ./docker_entrypoint.sh /usr/local/bin/docker_entrypoint.sh
