@@ -23,6 +23,8 @@ for dir in saved outputs; do
   ln -s /mnt/files/$dir
 done
 
+serve-progress.py & disown
+
 # Start downloading the model in the background
 download-model.py \
   '/mnt/files/models/Stable-diffusion' \

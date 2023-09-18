@@ -31,6 +31,5 @@ RUN mv models models_init
 # Copy important scripts from the start9 wrapper repository
 ADD --chmod=755 ./docker_entrypoint.sh /usr/local/bin/docker_entrypoint.sh
 ADD --chmod=755 ./check-mem.py /usr/local/bin/check-mem.py
-ADD --chmod=755 ./check-download.py /usr/local/bin/check-download.py
-ADD --chmod=755 ./serveprogress.py /usr/local/bin/serveprogress.py
+ADD --chmod=755 ./serve-progress.py /usr/local/bin/serve-progress.py
 ADD --chmod=755 ./download-model.py /usr/local/bin/download-model.py

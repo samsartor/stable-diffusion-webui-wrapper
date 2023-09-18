@@ -37,8 +37,12 @@ hardware-requirements:
     - x86_64
 health-checks:
   webui:
-    name: "WebUI"
-    success-message: "Ready to visit Stable Diffusion in a web browser"
+    name: WebUI
+    success-message: Ready to visit Stable Diffusion in a web browser
+    type: "script"
+  download:
+    name: Model Download
+    success-message: Default model is downloaded
     type: "script"
   memory:
     name: Memory Usage
@@ -47,17 +51,6 @@ health-checks:
     image: main
     system: false
     entrypoint: check-mem.py
-    args: []
-    mounts: {}
-    io-format: yaml
-    inject: true
-  download:
-    name: Model Download
-    success-message: Default model is downloaded
-    type: docker
-    image: main
-    system: false
-    entrypoint: check-download.py
     args: []
     mounts: {}
     io-format: yaml
