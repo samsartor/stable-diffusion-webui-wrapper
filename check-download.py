@@ -1,5 +1,7 @@
 #!/usr/bin/env python3
 
+# this should be replaced with a typescript service which calls to serveprogress.py
+
 from pathlib import Path
 import sys
 
@@ -21,7 +23,7 @@ try:
     if status[0] == 'PROGRESS' and len(status) > 1:
         print(f'Downloading default checkpoint {status[1]}', file=sys.stderr)
     else:
-                print('Downloading default checkpoint', file=sys.stderr)
+        print('Downloading default checkpoint', file=sys.stderr)
     exit(61)
 except Exception as e:
 	print(e, file=sys.stderr)
