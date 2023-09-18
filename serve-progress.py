@@ -9,11 +9,14 @@ status_path = Path('download-model-status.json')
 # Define a handler to serve the progress page
 class ProgressHandler(http.server.SimpleHTTPRequestHandler):
     def do_GET(self):
-        message = status_path.read_text()
-        self.send_response(200)
-        self.send_header("Content-type", "application/json")
-        self.end_headers()
-        self.wfile.write(message.encode())
+        try:
+            message = status_path.read_text()
+            self.send_response(200)
+            self.send_header("Content-type", "application/json")
+            self.end_headers()
+            self.wfile.write(message.encode())
+        except FileNotFoundError:
+            self.send_response(400)
 
     def log_message(self, format, *args):
         pass

@@ -25,6 +25,9 @@ ADD ./icon.png icon.png
 RUN wget -qO- https://github.com/Bing-su/adetailer/archive/refs/tags/v23.9.2.tar.gz | tar xz -C extensions-builtin
 RUN python extensions-builtin/adetailer-23.9.2/install.py
 
+# Clear the cache dir
+RUN rm -r /root/.cache
+
 # Create init directory to be copied to /mnt/files/ on startup
 RUN mv models models_init
 

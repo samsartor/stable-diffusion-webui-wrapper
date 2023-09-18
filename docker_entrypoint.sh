@@ -35,6 +35,9 @@ download-model.py \
   '879db523c30d3b9017143d56705015e15a2cb5628762c11d086fed9538abd7fd' \
   'dreamshaper-v8.safetensors'
 
+# Set the Huggingface cache dir
+export HF_HOME=/data/.cache/huggingface
+
 # Start the webui server
 exec tini -- \
   python -u webui.py \
