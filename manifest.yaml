@@ -3,19 +3,19 @@ title: "Stable Diffusion"
 version: 1.1.1.3
 # Release notes for the update - can be a string, paragraph or URL
 release-notes: |
-  * Initial release
+  * Initial release for StartOS
 license: MIT/A-GPL/RAIL-M
-wrapper-repo: "https://github.com/samsartor/stable-diffusion-webui-wrapper"
+wrapper-repo: "https://github.com/Start9Labs/stable-diffusion-webui-startos"
 upstream-repo: "https://github.com/AUTOMATIC1111/stable-diffusion-webui"
 support-site: "https://github.com/AUTOMATIC1111/stable-diffusion-webui/wiki"
 marketing-site: "https://github.com/AUTOMATIC1111/stable-diffusion-webui/wiki/Features"
 build: ["make"]
 description:
-  short: An AI image generator.
+  short: Private AI image generator
   long: |
     Stable Diffusion is a generative model that can create new images based on text prompts,
     or similarly modify existing images. This application is like MidJourney or DALL-E 2 in concept,
-    but provides far more user control and runs entirely on the Server Pure.
+    but provides far more user control and is entirely self-hosted and private.
 assets:
   license: LICENSE
   icon: icon.png
@@ -28,7 +28,7 @@ main:
   mounts:
     main: /data
     filebrowser: /mnt/files
-  # Allow GPU acess via /dev/dri
+  # Allow GPU access via /dev/dri
   gpu-acceleration: true
 hardware-requirements:
   device:
@@ -66,6 +66,14 @@ volumes:
     readonly: false
     type: pointer
     volume-id: main
+alerts:
+  install: |
+    READ CAREFULLY! Stable Diffusion Web UI has *no authentication*. If someone gets
+    ahold your unique Tor address, they will be able to generate images using your server.
+    They will *not* be able to see your image generation history. This service is in early
+    stage development! Minimal functionality and some bugs are expected. This service can
+    use significant system resources, so beware when running it alongside other services
+    that use significant system resources, such as Bitcoin or electrs.
 interfaces:
   main:
     name: User Interface
