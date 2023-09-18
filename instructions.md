@@ -1,4 +1,10 @@
-This service provides a graphical interface for the Stable Diffusion image generation model.
+Stable Diffusion Web UI provides a graphical interface for the Stable Diffusion image generation model.
+
+## Important Warnings!
+  - Stable Diffusion Web UI has *no authentication*. If someone gets ahold your unique Tor address, they will be able to generate images using your server. They will *not* be able to see your image generation history.
+  - This service is in *early stage* development
+  - Minimal functionality and some bugs are expected
+  - This service can use significant system resources. Beware when running it alongside other services that use significant system resources, such as Bitcoin or electrs.
 
 ## Basic Usage
 
@@ -10,7 +16,7 @@ All generated images are logged to the `stable-diffusion/outputs` directory in t
 
 ## Additional Models
 
-The default Stable Diffusion models included with the service (v2.1 and Dreamshaper v8) are generally quite good across a range of different styles and subjects, but you can get better results by choosing a model finetuned with your specific goals in mind. [Civitai](https://civitai.com/) is an excellent source of such models. To install one, download your chosen ".safetensors" file and then upload it to the `stable-diffusion/models/Stable-diffusion` directory in the File Browser service. Note that ".ckpt" files can also work, but are much less secure and may damage your system.
+The default Stable Diffusion models included with the service (v2.1 and Dreamshaper v8) are generally quite good across a range of different styles and subjects, but you can get better results by choosing a model fine tuned with your specific goals in mind. [Civitai](https://civitai.com/) is an excellent source of such models. To install one, download your chosen ".safetensors" file and then upload it to the `stable-diffusion/models/Stable-diffusion` directory in the File Browser service. Note that ".ckpt" files can also work, but are much less secure and may damage your system.
 
 You model should be based on "SD 1.5" or "SD 2.1". **No Stable Diffusion XL models are currently supported.**
 
