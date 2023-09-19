@@ -1,7 +1,7 @@
 Stable Diffusion Web UI provides a graphical interface for the Stable Diffusion image generation model.
 
 ## Important Warnings!
-  - Stable Diffusion Web UI has *no authentication*. If someone gets ahold your unique Tor address, they will be able to generate images using your server. They will *not* be able to see your image generation history.
+  - Stable Diffusion Web UI has *no authentication*. If someone gets ahold your unique Tor address, they will be able to generate images using your server and view see your image generation history.
   - This service is in *early stage* development
   - Minimal functionality and some bugs are expected
   - This service can use significant system resources. Beware when running it alongside other services that use significant system resources, such as Bitcoin or electrs.
