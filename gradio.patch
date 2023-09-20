@@ -73,15 +73,36 @@ index eb1c99507..fd572040b 100644
 2.36.0
 
 
-From 9f68297690696c59d45f1b38c9276cb865f7c2b4 Mon Sep 17 00:00:00 2001
+From 3f4e180ce82ee106fd18b41324ef21f026e7b4aa Mon Sep 17 00:00:00 2001
 From: Sam Sartor <me@samsartor.com>
 Date: Wed, 20 Sep 2023 03:07:32 -0400
 Subject: [PATCH] remove ibm plex mono
 
 ---
+ gradio/themes/default.py                |  2 --
  js/workbench/src/routes/__layout.svelte | 13 -------------
- 1 file changed, 13 deletions(-)
+ 2 files changed, 15 deletions(-)
 
+diff --git a/gradio/themes/default.py b/gradio/themes/default.py
+index c58299eb6..062b7fde4 100644
+--- a/gradio/themes/default.py
++++ b/gradio/themes/default.py
+@@ -19,7 +19,6 @@ class Default(Base):
+         font: fonts.Font
+         | str
+         | Iterable[fonts.Font | str] = (
+-            fonts.GoogleFont("Source Sans Pro"),
+             "ui-sans-serif",
+             "system-ui",
+             "sans-serif",
+@@ -27,7 +26,6 @@ class Default(Base):
+         font_mono: fonts.Font
+         | str
+         | Iterable[fonts.Font | str] = (
+-            fonts.GoogleFont("IBM Plex Mono"),
+             "ui-monospace",
+             "Consolas",
+             "monospace",
 diff --git a/js/workbench/src/routes/__layout.svelte b/js/workbench/src/routes/__layout.svelte
 index 2ee7ffc29..d1d1f6f38 100644
 --- a/js/workbench/src/routes/__layout.svelte
