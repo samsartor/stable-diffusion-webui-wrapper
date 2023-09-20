@@ -1,3 +1,6 @@
 [submodule "stable-diffusion-webui"]
 	path = stable-diffusion-webui
 	url = git@github.com:jbaboval/stable-diffusion-webui.git
+[submodule "gradio"]
+	path = gradio
+	url = git@github.com:gradio-app/gradio.git
