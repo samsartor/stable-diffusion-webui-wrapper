@@ -1,0 +1,74 @@
+From 4b97559c2bfa324ff90030f14b800496f99fa1a4 Mon Sep 17 00:00:00 2001
+From: Sam Sartor <me@samsartor.com>
+Date: Tue, 19 Sep 2023 23:16:00 -0400
+Subject: [PATCH] download iframeResizer & break font loading
+
+---
+ gradio/themes/utils/fonts.py | 2 +-
+ js/app/index.html            | 8 +-------
+ scripts/build_frontend.sh    | 6 +++++-
+ scripts/install_gradio.sh    | 1 +
+ 4 files changed, 8 insertions(+), 9 deletions(-)
+
+diff --git a/gradio/themes/utils/fonts.py b/gradio/themes/utils/fonts.py
+index d51dbbfdf..9a443cfdc 100644
+--- a/gradio/themes/utils/fonts.py
++++ b/gradio/themes/utils/fonts.py
+@@ -47,4 +47,4 @@ class GoogleFont(Font):
+         self.weights = weights
+ 
+     def stylesheet(self) -> str:
+-        return f'https://fonts.googleapis.com/css2?family={self.name.replace(" ", "+")}:wght@{";".join(str(weight) for weight in self.weights)}&display=swap'
++        pass
+diff --git a/js/app/index.html b/js/app/index.html
+index e74d43728..48f91a882 100644
+--- a/js/app/index.html
++++ b/js/app/index.html
+@@ -40,13 +40,7 @@
+ 
+ 		%gradio_config%
+ 
+-		<link rel="preconnect" href="https://fonts.googleapis.com" />
+-		<link
+-			rel="preconnect"
+-			href="https://fonts.gstatic.com"
+-			crossorigin="anonymous"
+-		/>
+-		<script src="https://cdnjs.cloudflare.com/ajax/libs/iframe-resizer/4.3.1/iframeResizer.contentWindow.min.js"></script>
++		<script src="/static/iframeResizer.contentWindow.min.js"></script>
+ 	</head>
+ 
+ 	<body
+diff --git a/scripts/build_frontend.sh b/scripts/build_frontend.sh
+index 5ff83d2a3..abe5a2978 100644
+--- a/scripts/build_frontend.sh
++++ b/scripts/build_frontend.sh
+@@ -1,10 +1,14 @@
+ #!/bin/bash
++set -e
+ 
+ cd "$(dirname ${0})/.."
+ source scripts/helpers.sh
+ 
+ pnpm_required
+ 
++echo "Downloading iframeResizer"
++wget -P js/app/public/static 'https://cdnjs.cloudflare.com/ajax/libs/iframe-resizer/4.3.1/iframeResizer.contentWindow.min.js'
++
+ echo "Building the frontend..."
+ pnpm i --frozen-lockfile
+-pnpm build
++pnpm $@ build
+diff --git a/scripts/install_gradio.sh b/scripts/install_gradio.sh
+index eb1c99507..fd572040b 100644
+--- a/scripts/install_gradio.sh
++++ b/scripts/install_gradio.sh
+@@ -1,4 +1,5 @@
+ #!/bin/bash
++set -e
+ 
+ cd "$(dirname ${0})/.."
+ source scripts/helpers.sh
+-- 
+2.36.0
+
