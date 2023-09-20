@@ -8,7 +8,7 @@ with pkgs; mkShell (let
     clang
     libclang.lib
     lld
-    pkgconfig
+    pkg-config
 
 		# Other embassyOS dependencies
     openssl

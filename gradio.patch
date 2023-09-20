@@ -1,0 +1,132 @@
+From 4b97559c2bfa324ff90030f14b800496f99fa1a4 Mon Sep 17 00:00:00 2001
+From: Sam Sartor <me@samsartor.com>
+Date: Tue, 19 Sep 2023 23:16:00 -0400
+Subject: [PATCH] download iframeResizer & break font loading
+
+---
+ gradio/themes/utils/fonts.py | 2 +-
+ js/app/index.html            | 8 +-------
+ scripts/build_frontend.sh    | 6 +++++-
+ scripts/install_gradio.sh    | 1 +
+ 4 files changed, 8 insertions(+), 9 deletions(-)
+
+diff --git a/gradio/themes/utils/fonts.py b/gradio/themes/utils/fonts.py
+index d51dbbfdf..9a443cfdc 100644
+--- a/gradio/themes/utils/fonts.py
++++ b/gradio/themes/utils/fonts.py
+@@ -47,4 +47,4 @@ class GoogleFont(Font):
+         self.weights = weights
+ 
+     def stylesheet(self) -> str:
+-        return f'https://fonts.googleapis.com/css2?family={self.name.replace(" ", "+")}:wght@{";".join(str(weight) for weight in self.weights)}&display=swap'
++        pass
+diff --git a/js/app/index.html b/js/app/index.html
+index e74d43728..48f91a882 100644
+--- a/js/app/index.html
++++ b/js/app/index.html
+@@ -40,13 +40,7 @@
+ 
+ 		%gradio_config%
+ 
+-		<link rel="preconnect" href="https://fonts.googleapis.com" />
+-		<link
+-			rel="preconnect"
+-			href="https://fonts.gstatic.com"
+-			crossorigin="anonymous"
+-		/>
+-		<script src="https://cdnjs.cloudflare.com/ajax/libs/iframe-resizer/4.3.1/iframeResizer.contentWindow.min.js"></script>
++		<script src="/static/iframeResizer.contentWindow.min.js"></script>
+ 	</head>
+ 
+ 	<body
+diff --git a/scripts/build_frontend.sh b/scripts/build_frontend.sh
+index 5ff83d2a3..abe5a2978 100644
+--- a/scripts/build_frontend.sh
++++ b/scripts/build_frontend.sh
+@@ -1,10 +1,14 @@
+ #!/bin/bash
++set -e
+ 
+ cd "$(dirname ${0})/.."
+ source scripts/helpers.sh
+ 
+ pnpm_required
+ 
++echo "Downloading iframeResizer"
++wget -P js/app/public/static 'https://cdnjs.cloudflare.com/ajax/libs/iframe-resizer/4.3.1/iframeResizer.contentWindow.min.js'
++
+ echo "Building the frontend..."
+ pnpm i --frozen-lockfile
+-pnpm build
++pnpm $@ build
+diff --git a/scripts/install_gradio.sh b/scripts/install_gradio.sh
+index eb1c99507..fd572040b 100644
+--- a/scripts/install_gradio.sh
++++ b/scripts/install_gradio.sh
+@@ -1,4 +1,5 @@
+ #!/bin/bash
++set -e
+ 
+ cd "$(dirname ${0})/.."
+ source scripts/helpers.sh
+-- 
+2.36.0
+
+
+From 3f4e180ce82ee106fd18b41324ef21f026e7b4aa Mon Sep 17 00:00:00 2001
+From: Sam Sartor <me@samsartor.com>
+Date: Wed, 20 Sep 2023 03:07:32 -0400
+Subject: [PATCH] remove ibm plex mono
+
+---
+ gradio/themes/default.py                |  2 --
+ js/workbench/src/routes/__layout.svelte | 13 -------------
+ 2 files changed, 15 deletions(-)
+
+diff --git a/gradio/themes/default.py b/gradio/themes/default.py
+index c58299eb6..062b7fde4 100644
+--- a/gradio/themes/default.py
++++ b/gradio/themes/default.py
+@@ -19,7 +19,6 @@ class Default(Base):
+         font: fonts.Font
+         | str
+         | Iterable[fonts.Font | str] = (
+-            fonts.GoogleFont("Source Sans Pro"),
+             "ui-sans-serif",
+             "system-ui",
+             "sans-serif",
+@@ -27,7 +26,6 @@ class Default(Base):
+         font_mono: fonts.Font
+         | str
+         | Iterable[fonts.Font | str] = (
+-            fonts.GoogleFont("IBM Plex Mono"),
+             "ui-monospace",
+             "Consolas",
+             "monospace",
+diff --git a/js/workbench/src/routes/__layout.svelte b/js/workbench/src/routes/__layout.svelte
+index 2ee7ffc29..d1d1f6f38 100644
+--- a/js/workbench/src/routes/__layout.svelte
++++ b/js/workbench/src/routes/__layout.svelte
+@@ -8,19 +8,6 @@
+ 	export const ssr = false;
+ </script>
+ 
+-<svelte:head>
+-	<link rel="preconnect" href="https://fonts.googleapis.com" />
+-	<link
+-		rel="preconnect"
+-		href="https://fonts.gstatic.com"
+-		crossorigin="anonymous"
+-	/>
+-	<link
+-		href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;1,100;1,200;1,300;1,400;1,500;1,600&family=IBM+Plex+Sans:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;1,100;1,200;1,300;1,400;1,500;1,600;1,700&family=IBM+Plex+Serif:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;1,100;1,200;1,300;1,400;1,500;1,600;1,700&display=swap"
+-		rel="stylesheet"
+-	/>
+-</svelte:head>
+-
+ <div class="{mode} min-w-full h-full">
+ 	<header
+ 		class=" px-6 py-2 border-b flex flex-row items-center text-orange-500 bg-gradient-to-r from-orange-50 to-white border-orange-50 dark:from-orange-900 dark:to-gray-900 dark:border-gray-900"
+-- 
+2.36.0
+
