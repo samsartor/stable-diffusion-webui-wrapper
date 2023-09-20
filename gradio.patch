@@ -72,3 +72,40 @@ index eb1c99507..fd572040b 100644
 -- 
 2.36.0
 
+
+From 9f68297690696c59d45f1b38c9276cb865f7c2b4 Mon Sep 17 00:00:00 2001
+From: Sam Sartor <me@samsartor.com>
+Date: Wed, 20 Sep 2023 03:07:32 -0400
+Subject: [PATCH] remove ibm plex mono
+
+---
+ js/workbench/src/routes/__layout.svelte | 13 -------------
+ 1 file changed, 13 deletions(-)
+
+diff --git a/js/workbench/src/routes/__layout.svelte b/js/workbench/src/routes/__layout.svelte
+index 2ee7ffc29..d1d1f6f38 100644
+--- a/js/workbench/src/routes/__layout.svelte
++++ b/js/workbench/src/routes/__layout.svelte
+@@ -8,19 +8,6 @@
+ 	export const ssr = false;
+ </script>
+ 
+-<svelte:head>
+-	<link rel="preconnect" href="https://fonts.googleapis.com" />
+-	<link
+-		rel="preconnect"
+-		href="https://fonts.gstatic.com"
+-		crossorigin="anonymous"
+-	/>
+-	<link
+-		href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;1,100;1,200;1,300;1,400;1,500;1,600&family=IBM+Plex+Sans:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;1,100;1,200;1,300;1,400;1,500;1,600;1,700&family=IBM+Plex+Serif:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;1,100;1,200;1,300;1,400;1,500;1,600;1,700&display=swap"
+-		rel="stylesheet"
+-	/>
+-</svelte:head>
+-
+ <div class="{mode} min-w-full h-full">
+ 	<header
+ 		class=" px-6 py-2 border-b flex flex-row items-center text-orange-500 bg-gradient-to-r from-orange-50 to-white border-orange-50 dark:from-orange-900 dark:to-gray-900 dark:border-gray-900"
+-- 
+2.36.0
+
