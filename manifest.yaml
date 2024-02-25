@@ -1,9 +1,13 @@
 id: stable-diffusion-webui
 title: "Stable Diffusion"
-version: 1.1.1.4
+version: 1.8.0.1
 # Release notes for the update - can be a string, paragraph or URL
 release-notes: |
-  * Initial release for StartOS
+  - Update WebUI version from 1.1 to 1.8
+  - Change the default models to SDXL Turbo
+  - Make some UX improvements to simplify the use of Turbo models
+  - Use IPEX's CPU optimizations instead of targeting the integrated GPU
+  - Allow the package no run on non-Intel CPUs via the plain PyTorch CPU backend
 license: MIT/A-GPL/RAIL-M
 wrapper-repo: "https://github.com/Start9Labs/stable-diffusion-webui-startos"
 upstream-repo: "https://github.com/AUTOMATIC1111/stable-diffusion-webui"
@@ -31,8 +35,6 @@ main:
   # Allow GPU access via /dev/dri
   gpu-acceleration: true
 hardware-requirements:
-  device:
-    display: CometLake
   arch:
     - x86_64
 health-checks:

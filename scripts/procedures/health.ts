@@ -26,14 +26,14 @@ export const health: T.ExpectedExports.health = {
         if (waiting < 30_000) {
           return errorCode(61, 'Webserver starting');
         } else {
-           return error('Can not reach webserver');
+          return error('Can not reach webserver');
         }
       }
       if (status['state'] == 'ERROR') {
         return errorCode(60, 'Can not start webserver without default models');
       }
     } catch(e) { console.warn(e) }
-    const value = guardDurationAboveMinimum({ duration, minimumTime: 10_000 });
+    const value = guardDurationAboveMinimum({ duration, minimumTime: 30_000 });
     if (value) {
       return value;
     } else {
@@ -54,7 +54,7 @@ export const health: T.ExpectedExports.health = {
         return errorCode(60, status['message'] || 'Unknown error');
       }
     } catch(e) { console.warn(e); }
-    const value = guardDurationAboveMinimum({ duration, minimumTime: 10_000 });
+    const value = guardDurationAboveMinimum({ duration, minimumTime: 30_000 });
     if (value) {
       return value;
     } else {

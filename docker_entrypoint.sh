@@ -28,18 +28,25 @@ serve-progress.py & disown
 # Start downloading the model in the background
 download-model.py \
   '/mnt/files/models/Stable-diffusion' \
-  'https://huggingface.co/stabilityai/stable-diffusion-2-1/resolve/main/v2-1_768-ema-pruned.safetensors' \
-  'dcd690123cfc64383981a31d955694f6acf2072a80537fdb612c8e58ec87a8ac' \
-  'stable-diffusion-v2_1.safetensors' \
-  'https://civitai.com/api/download/models/128713' \
-  '879db523c30d3b9017143d56705015e15a2cb5628762c11d086fed9538abd7fd' \
-  'dreamshaper-v8.safetensors'
+  \
+  'https://huggingface.co/stabilityai/sdxl-turbo/resolve/main/sd_xl_turbo_1.0_fp16.safetensors?download=true' \
+  'e869ac7d6942cb327d68d5ed83a40447aadf20e0c3358d98b2cc9e270db0da26' \
+  'sd_xl_turbo_1.0_fp16.safetensors' \
+  \
+  'https://civitai.com/api/download/models/351306' \
+  '4496b36d48bfd7cfe4e5dbce3485db567bcefa2bef7238d290dbd45612125083' \
+  'dreamshaperXL_v21TurboDPMSDE.safetensors'
 
 # Set the Huggingface cache dir
 export HF_HOME=/data/.cache/huggingface
 
+WEBUI_EXTRA='--use-cpu'
+if grep -q -wi 'GenuineIntel' /proc/cpuinfo; then
+  WEBUI_EXTRA='--use-ipex'
+fi
+
 # Start the webui server
-exec tini -- \
+exec tini -s -- \
   python -u webui.py \
   --listen --port=7860 \
   --precision full --no-half \
@@ -47,4 +54,5 @@ exec tini -- \
   --ui-settings-file /data/config.json --ui-config-file /data/ui-config.json \
   --no-download-sd-model \
   --hide-ui-dir-config \
-  --use-intel-oneapi 
+  --ckpt /mnt/files/models/Stable-diffusion/dreamshaperXL_v21TurboDPMSDE.safetensors \
+  $WEBUI_EXTRA

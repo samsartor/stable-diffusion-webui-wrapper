@@ -1,45 +1,262 @@
-From f7ff702fbc42288a7737f93482d698f369a73efa Mon Sep 17 00:00:00 2001
+From 5e7a4f37d6c0845265898c6ccdc8f8cfdbbae21d Mon Sep 17 00:00:00 2001
 From: Sam Sartor <me@samsartor.com>
-Date: Tue, 19 Sep 2023 17:39:40 -0600
-Subject: [PATCH 1/3] patches for start9 hide footgun elements
+Date: Thu, 22 Feb 2024 14:43:51 -0500
+Subject: [PATCH] patches for startos
 
 ---
- javascript/ui.js  |  1 +
- modules/shared.py |  2 +-
- style.css         | 11 +++++++++++
- webui.py          |  3 ++-
- 4 files changed, 15 insertions(+), 2 deletions(-)
+ .../sdxl-turbo-ux/scripts/sdxl_turbo_ux.py    | 95 +++++++++++++++++++
+ javascript/ui.js                              |  1 +
+ modules/script_callbacks.py                   | 15 +++
+ modules/sd_hijack.py                          |  7 ++
+ modules/shared_options.py                     |  2 +-
+ modules/ui.py                                 |  5 +-
+ modules/ui_gradio_extensions.py               |  2 +
+ style.css                                     | 13 ++-
+ webui.py                                      |  1 +
+ 9 files changed, 137 insertions(+), 4 deletions(-)
+ create mode 100644 extensions-builtin/sdxl-turbo-ux/scripts/sdxl_turbo_ux.py
 
+diff --git a/extensions-builtin/sdxl-turbo-ux/scripts/sdxl_turbo_ux.py b/extensions-builtin/sdxl-turbo-ux/scripts/sdxl_turbo_ux.py
+new file mode 100644
+index 00000000..2183317f
+--- /dev/null
++++ b/extensions-builtin/sdxl-turbo-ux/scripts/sdxl_turbo_ux.py
+@@ -0,0 +1,95 @@
++import gradio as gr
++from modules import scripts, shared, script_callbacks
++from typing import Any
++
++TUBO_SETTINGS = {
++    ('sd_xl_turbo_1.0', 'sampling'): 'Euler a',
++    ('sd_xl_turbo_1.0', 'cfg_scale'): 1,
++    ('sd_xl_turbo_1.0', 'steps'): [1, 2, 4],
++    ('dreamshaperXL_v21TurboDPMSDE', 'sampling'): 'DPM++ SDE Karras',
++    ('dreamshaperXL_v21TurboDPMSDE', 'cfg_scale'): 2,
++    ('dreamshaperXL_v21TurboDPMSDE', 'steps'): [4, 4, 8],
++}
++
++class Script(scripts.Script):
++    def __init__(self):
++        self.name = 'sdxl_turbo_ux'
++        #self.setup_for_ui_only = True
++
++        self.checkpoint_ui_component: Any = None
++        self.ui_components: dict[str, Any] = { k: None for (_, k) in TUBO_SETTINGS.keys() }
++
++        script_callbacks.on_after_ui_settings(self.setup_checkpoint_changed)
++
++    def title(self):
++        return "SDXL Turbo UX"
++
++    def show(self, is_img2img):
++        return scripts.AlwaysVisible
++
++    def ui(self, is_img2img):
++        pass
++
++    def after_component(self, component, **kwargs):
++        if component.elem_id is None:
++            return
++
++        id = component.elem_id.removeprefix('img2img_' if self.is_img2img else 'txt2img_')
++        if id in self.ui_components:
++            self.ui_components[id] = component
++
++    def setup_checkpoint_changed(self, params: script_callbacks.AfterUiSettingsParams):
++        self.checkpoint_ui_component = shared.settings_components['sd_model_checkpoint']
++        components = list(self.ui_components.values())
++        self.checkpoint_ui_component.change(
++            fn=self.checkpoint_changed,
++            inputs=[self.checkpoint_ui_component, *components],
++            outputs=components,
++            show_progress='hidden',
++        )
++        params.block.load(
++            fn=self.checkpoint_changed,
++            inputs=[self.checkpoint_ui_component, *components],
++            outputs=components,
++            show_progress='hidden',
++        )
++
++    def checkpoint_changed(self, title, *values):
++        values = dict(zip(self.ui_components.keys(), values))
++        specs = {k: v for ((ckpt, k), v) in TUBO_SETTINGS.items() if ckpt in title}
++
++        for (key, original) in self.ui_components.items():
++            spec = specs.get(key)
++            if isinstance(original, gr.Slider):
++                if spec is None:
++                    values[key] = gr.update(
++                        minimum=original.minimum,
++                        maximum=original.maximum,
++                        value=original.value,
++                        interactive=True,
++                    )
++                elif isinstance(spec, list):
++                    values[key] = gr.update(
++                        minimum=spec[0],
++                        maximum=spec[2],
++                        value=spec[1],
++                        interactive=False,
++                    )
++                else:
++                    values[key] = gr.update(
++                        value=spec,
++                        interactive=False,
++                    )
++            else:
++                if spec is None:
++                    values[key] = gr.update(
++                        value=original.value,
++                        interactive=True,
++                    )
++                else:
++                    values[key] = gr.update(
++                        value=spec,
++                        interactive=False,
++                    )
++
++        return list(values.values())
 diff --git a/javascript/ui.js b/javascript/ui.js
-index bfe31525..15949c56 100644
+index 3d079b3d..e4e74f75 100644
 --- a/javascript/ui.js
 +++ b/javascript/ui.js
-@@ -238,6 +238,7 @@ function restoreProgressImg2img(x){
- onUiLoaded(function () {
-     showRestoreProgressButton('txt2img', localStorage.getItem("txt2img_task_id"))
-     showRestoreProgressButton('img2img', localStorage.getItem("img2img_task_id"))
-+    gradioApp().getElementById(tabname + "_restore_progress").click()
+@@ -259,6 +259,7 @@ onUiLoaded(function() {
+     showRestoreProgressButton('img2img', localGet("img2img_task_id"));
+     setupResolutionPasting('txt2img');
+     setupResolutionPasting('img2img');
++    gradioApp().getElementById(tabname + "_restore_progress").click();
  });
  
  
-diff --git a/modules/shared.py b/modules/shared.py
-index 8205f6a8..9537ce9e 100644
---- a/modules/shared.py
-+++ b/modules/shared.py
-@@ -289,7 +289,7 @@ options_templates.update(options_section(('saving-paths', "Paths for saving"), {
+diff --git a/modules/script_callbacks.py b/modules/script_callbacks.py
+index 08bc5256..6a7d9ce3 100644
+--- a/modules/script_callbacks.py
++++ b/modules/script_callbacks.py
+@@ -106,6 +106,10 @@ class ImageGridLoopParams:
+         self.cols = cols
+         self.rows = rows
+ 
++class AfterUiSettingsParams:
++    def __init__(self, block):
++        self.block = block
++
+ 
+ @dataclasses.dataclass
+ class BeforeTokenCounterParams:
+@@ -123,6 +127,7 @@ callback_map = dict(
+     callbacks_ui_tabs=[],
+     callbacks_ui_train_tabs=[],
+     callbacks_ui_settings=[],
++    callbacks_after_ui_settings=[],
+     callbacks_before_image_saved=[],
+     callbacks_image_saved=[],
+     callbacks_extra_noise=[],
+@@ -199,6 +204,12 @@ def ui_settings_callback():
+         except Exception:
+             report_exception(c, 'ui_settings_callback')
+ 
++def after_ui_settings_callback(params: AfterUiSettingsParams):
++    for c in callback_map['callbacks_after_ui_settings']:
++        try:
++            c.callback(params)
++        except Exception:
++            report_exception(c, 'after_ui_settings_callback')
+ 
+ def before_image_saved_callback(params: ImageSaveParams):
+     for c in callback_map['callbacks_before_image_saved']:
+@@ -393,6 +404,10 @@ def on_ui_settings(callback):
+     by using shared.opts.add_option(shared.OptionInfo(...)) """
+     add_callback(callback_map['callbacks_ui_settings'], callback)
+ 
++def on_after_ui_settings(callback):
++    """register a function to be called after all UI settings components are created
++    """
++    add_callback(callback_map['callbacks_after_ui_settings'], callback)
+ 
+ def on_before_image_saved(callback):
+     """register a function to be called before an image is saved to a file.
+diff --git a/modules/sd_hijack.py b/modules/sd_hijack.py
+index e139d996..8037b207 100644
+--- a/modules/sd_hijack.py
++++ b/modules/sd_hijack.py
+@@ -271,6 +271,13 @@ class StableDiffusionModelHijack:
+         else:
+             sd_unet.original_forward = None
+ 
++        if cmd_opts.use_ipex and devices.xpu_specific.has_ipex:
++            print('applying ipex optimization')
++            m.model.diffusion_model.eval()
++            devices.xpu_specific.ipex.optimize(m.model.diffusion_model, weights_prepack=False)
++        else:
++            print('skipping ipex optimization')
++
+ 
+     def undo_hijack(self, m):
+         conditioner = getattr(m, 'conditioner', None)
+diff --git a/modules/shared_options.py b/modules/shared_options.py
+index e1d11c8e..1d315bcf 100644
+--- a/modules/shared_options.py
++++ b/modules/shared_options.py
+@@ -81,7 +81,7 @@ options_templates.update(options_section(('saving-paths', "Paths for saving", "s
      "outdir_grids": OptionInfo("", "Output directory for grids; if empty, defaults to two directories below", component_args=hide_dirs),
-     "outdir_txt2img_grids": OptionInfo("outputs/txt2img-grids", 'Output directory for txt2img grids', component_args=hide_dirs),
-     "outdir_img2img_grids": OptionInfo("outputs/img2img-grids", 'Output directory for img2img grids', component_args=hide_dirs),
--    "outdir_save": OptionInfo("log/images", "Directory for saving images using the Save button", component_args=hide_dirs),
-+    "outdir_save": OptionInfo("saved", "Directory for saving images using the Save button", component_args=hide_dirs),
-     "outdir_init_images": OptionInfo("outputs/init-images", "Directory for saving init images when using img2img", component_args=hide_dirs),
+     "outdir_txt2img_grids": OptionInfo(util.truncate_path(os.path.join(default_output_dir, 'txt2img-grids')), 'Output directory for txt2img grids', component_args=hide_dirs),
+     "outdir_img2img_grids": OptionInfo(util.truncate_path(os.path.join(default_output_dir, 'img2img-grids')), 'Output directory for img2img grids', component_args=hide_dirs),
+-    "outdir_save": OptionInfo(util.truncate_path(os.path.join(data_path, 'log', 'images')), "Directory for saving images using the Save button", component_args=hide_dirs),
++    "outdir_save": OptionInfo(util.truncate_path(os.path.join(data_path, 'saved')), "Directory for saving images using the Save button", component_args=hide_dirs),
+     "outdir_init_images": OptionInfo(util.truncate_path(os.path.join(default_output_dir, 'init-images')), "Directory for saving init images when using img2img", component_args=hide_dirs),
  }))
  
+diff --git a/modules/ui.py b/modules/ui.py
+index dcba8e88..3f7880ec 100644
+--- a/modules/ui.py
++++ b/modules/ui.py
+@@ -1124,8 +1124,8 @@ def create_ui():
+         (img2img_interface, "img2img", "img2img"),
+         (extras_interface, "Extras", "extras"),
+         (pnginfo_interface, "PNG Info", "pnginfo"),
+-        (modelmerger_ui.blocks, "Checkpoint Merger", "modelmerger"),
+-        (train_interface, "Train", "train"),
++        #(modelmerger_ui.blocks, "Checkpoint Merger", "modelmerger"),
++        #(train_interface, "Train", "train"),
+     ]
+ 
+     interfaces += script_callbacks.ui_tabs_callback()
+@@ -1142,6 +1142,7 @@ def create_ui():
+         settings.add_quicksettings()
+ 
+         parameters_copypaste.connect_paste_params_buttons()
++        script_callbacks.after_ui_settings_callback(script_callbacks.AfterUiSettingsParams(demo))
+ 
+         with gr.Tabs(elem_id="tabs") as tabs:
+             tab_order = {k: i for i, k in enumerate(opts.ui_tab_order)}
+diff --git a/modules/ui_gradio_extensions.py b/modules/ui_gradio_extensions.py
+index f5278d22..6f1a22b4 100644
+--- a/modules/ui_gradio_extensions.py
++++ b/modules/ui_gradio_extensions.py
+@@ -1,5 +1,6 @@
+ import os
+ import gradio as gr
++import re
+ 
+ from modules import localization, shared, scripts, util
+ from modules.paths import script_path, data_path
+@@ -50,6 +51,7 @@ def reload_javascript():
+ 
+     def template_response(*args, **kwargs):
+         res = shared.GradioTemplateResponseOriginal(*args, **kwargs)
++        res.body = re.sub(b'<script\\s[^>]*src="https:\\/\\/[^"]+"[^>]*>\\s*<\\/script>', b'', res.body)
+         res.body = res.body.replace(b'</head>', f'{js}</head>'.encode("utf8"))
+         res.body = res.body.replace(b'</body>', f'{css}</body>'.encode("utf8"))
+         res.init_headers()
 diff --git a/style.css b/style.css
-index 3f56087a..efba269d 100644
+index 8ce78ff0..d17d2bcf 100644
 --- a/style.css
 +++ b/style.css
-@@ -1,3 +1,14 @@
+@@ -9,6 +9,17 @@ div.gradio-image button[aria-label="Edit"] {
+     display: none;
+ }
+ 
 +/*
 +   Hack to prevent width/height-batch-size from showing.
 +   Because those are footguns on start9's pure server.
@@ -54,145 +271,27 @@ index 3f56087a..efba269d 100644
  
  /* general gradio fixes */
  
+@@ -1348,7 +1359,7 @@ body.resizing .resize-handle {
+     flex-basis: 100%;
+ }
+ /* Buttons for directories. */
+-.extra-network-tree .tree-list-content-dir {}   
++.extra-network-tree .tree-list-content-dir {}
+ 
+ /* Buttons for files. */
+ .extra-network-tree .tree-list-item--has-subitem .tree-list--subgroup > li:first-child {
 diff --git a/webui.py b/webui.py
-index 3c7f6555..4fecd3ca 100644
+index 2c417168..f9b3b5f1 100644
 --- a/webui.py
 +++ b/webui.py
-@@ -329,7 +329,8 @@ def webui():
-             debug=cmd_opts.gradio_debug,
-             auth=[tuple(cred.split(':')) for cred in gradio_auth_creds] if gradio_auth_creds else None,
-             inbrowser=cmd_opts.autolaunch,
--            prevent_thread_lock=True
-+            prevent_thread_lock=True,
+@@ -93,6 +93,7 @@ def webui():
+                 "redoc_url": "/redoc",
+             },
+             root_path=f"/{cmd_opts.subpath}" if cmd_opts.subpath else "",
 +            favicon_path="icon.png",
          )
-         # after initial launch, disable --autolaunch for subsequent restarts
-         cmd_opts.autolaunch = False
+ 
+         startup_timer.record("gradio launch")
 -- 
-2.39.2
-
-
-From 41399c78ac8a6aeac562dba551e3c0e3c3502669 Mon Sep 17 00:00:00 2001
-From: Matt Hill <matt@start9.com>
-Date: Tue, 19 Sep 2023 18:52:30 -0600
-Subject: [PATCH 2/3] remove fonts
-
----
- modules/images.py                            | 6 +-----
- modules/textual_inversion/image_embedding.py | 7 +------
- requirements.txt                             | 2 --
- requirements_versions.txt                    | 2 --
- 4 files changed, 2 insertions(+), 15 deletions(-)
-
-diff --git a/modules/images.py b/modules/images.py
-index fd173829..06dbebe3 100644
---- a/modules/images.py
-+++ b/modules/images.py
-@@ -13,7 +13,6 @@ import numpy as np
- import piexif
- import piexif.helper
- from PIL import Image, ImageFont, ImageDraw, PngImagePlugin
--from fonts.ttf import Roboto
- import string
- import json
- import hashlib
-@@ -143,10 +142,7 @@ def draw_grid_annotations(im, width, height, hor_texts, ver_texts, margin=0):
-         return lines
- 
-     def get_font(fontsize):
--        try:
--            return ImageFont.truetype(opts.font or Roboto, fontsize)
--        except Exception:
--            return ImageFont.truetype(Roboto, fontsize)
-+        return ImageFont.load_default()
- 
-     def draw_texts(drawing, draw_x, draw_y, lines, initial_fnt, initial_fontsize):
-         for i, line in enumerate(lines):
-diff --git a/modules/textual_inversion/image_embedding.py b/modules/textual_inversion/image_embedding.py
-index 5593f88c..fa9868e9 100644
---- a/modules/textual_inversion/image_embedding.py
-+++ b/modules/textual_inversion/image_embedding.py
-@@ -3,7 +3,6 @@ import json
- import numpy as np
- import zlib
- from PIL import Image, PngImagePlugin, ImageDraw, ImageFont
--from fonts.ttf import Roboto
- import torch
- from modules.shared import opts
- 
-@@ -136,11 +135,7 @@ def caption_image_overlay(srcimage, title, footerLeft, footerMid, footerRight, t
-     image = srcimage.copy()
-     fontsize = 32
-     if textfont is None:
--        try:
--            textfont = ImageFont.truetype(opts.font or Roboto, fontsize)
--            textfont = opts.font or Roboto
--        except Exception:
--            textfont = Roboto
-+        textfont = ImageFont.load_default()
- 
-     factor = 1.5
-     gradient = Image.new('RGBA', (1, image.size[1]), color=(0, 0, 0, 0))
-diff --git a/requirements.txt b/requirements.txt
-index c08c82d7..ad1cc903 100644
---- a/requirements.txt
-+++ b/requirements.txt
-@@ -2,8 +2,6 @@ astunparse
- blendmodes
- accelerate
- basicsr
--fonts
--font-roboto
- gfpgan
- gradio==3.28.1
- numpy
-diff --git a/requirements_versions.txt b/requirements_versions.txt
-index cfdce216..eed2fd84 100644
---- a/requirements_versions.txt
-+++ b/requirements_versions.txt
-@@ -11,8 +11,6 @@ torch
- omegaconf==2.2.3
- pytorch_lightning==1.9.4
- scikit-image==0.19.2
--fonts
--font-roboto
- timm==0.6.7
- piexif==1.1.3
- einops==0.4.1
--- 
-2.39.2
-
-
-From ecfdff0950b9905dbccb31dcc9a00bf947e56601 Mon Sep 17 00:00:00 2001
-From: Aiden McClelland <me@drbonez.dev>
-Date: Tue, 19 Sep 2023 19:04:10 -0600
-Subject: [PATCH 3/3] remove scripts and links from external sources
-
----
- modules/ui.py | 3 +++
- 1 file changed, 3 insertions(+)
-
-diff --git a/modules/ui.py b/modules/ui.py
-index 7b45f131..f1e5542b 100644
---- a/modules/ui.py
-+++ b/modules/ui.py
-@@ -5,6 +5,7 @@ import mimetypes
- import os
- import platform
- import random
-+import re
- import sys
- import tempfile
- import time
-@@ -1907,6 +1908,8 @@ def reload_javascript():
- 
-     def template_response(*args, **kwargs):
-         res = shared.GradioTemplateResponseOriginal(*args, **kwargs)
-+        res.body = re.sub(b'<script\\s[^>]*src="https:\\/\\/[^"]+"[^>]*>\\s*<\\/script>', b'', res.body)
-+        res.body = re.sub(b'<link\\s[^>]*href="https:\\/\\/[^"]+"[^>]*>', b'', res.body)
-         res.body = res.body.replace(b'</head>', f'{js}</head>'.encode("utf8"))
-         res.body = res.body.replace(b'</body>', f'{css}</body>'.encode("utf8"))
-         res.init_headers()
--- 
-2.39.2
+2.42.0
 

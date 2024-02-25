@@ -4,4 +4,4 @@ This repository creates the `s9pk` package that is installed to run `Stable Diff
 
 ## Building
 
-The process of building the package is the same as for pretty much any other start9 wrapper repository. If you have the dependencies installed, just run `make`.
+The process of building the package is the same as for pretty much any other start9 wrapper repository. If you have the dependencies installed and submodules checked out, just run `make`.
