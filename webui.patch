@@ -1,4 +1,4 @@
-From 5e7a4f37d6c0845265898c6ccdc8f8cfdbbae21d Mon Sep 17 00:00:00 2001
+From 873be88f960bcfd60803235dbc0fd0f3af09aa9f Mon Sep 17 00:00:00 2001
 From: Sam Sartor <me@samsartor.com>
 Date: Thu, 22 Feb 2024 14:43:51 -0500
 Subject: [PATCH] patches for startos
@@ -130,7 +130,7 @@ index 3d079b3d..e4e74f75 100644
  
  
 diff --git a/modules/script_callbacks.py b/modules/script_callbacks.py
-index 08bc5256..6a7d9ce3 100644
+index 08bc5256..2f4f5369 100644
 --- a/modules/script_callbacks.py
 +++ b/modules/script_callbacks.py
 @@ -106,6 +106,10 @@ class ImageGridLoopParams:
@@ -177,7 +177,7 @@ index 08bc5256..6a7d9ce3 100644
  def on_before_image_saved(callback):
      """register a function to be called before an image is saved to a file.
 diff --git a/modules/sd_hijack.py b/modules/sd_hijack.py
-index e139d996..8037b207 100644
+index e139d996..98661b6e 100644
 --- a/modules/sd_hijack.py
 +++ b/modules/sd_hijack.py
 @@ -271,6 +271,13 @@ class StableDiffusionModelHijack:
@@ -195,7 +195,7 @@ index e139d996..8037b207 100644
      def undo_hijack(self, m):
          conditioner = getattr(m, 'conditioner', None)
 diff --git a/modules/shared_options.py b/modules/shared_options.py
-index e1d11c8e..1d315bcf 100644
+index e1d11c8e..fe79a233 100644
 --- a/modules/shared_options.py
 +++ b/modules/shared_options.py
 @@ -81,7 +81,7 @@ options_templates.update(options_section(('saving-paths', "Paths for saving", "s
@@ -208,7 +208,7 @@ index e1d11c8e..1d315bcf 100644
  }))
  
 diff --git a/modules/ui.py b/modules/ui.py
-index dcba8e88..3f7880ec 100644
+index dcba8e88..e5799adc 100644
 --- a/modules/ui.py
 +++ b/modules/ui.py
 @@ -1124,8 +1124,8 @@ def create_ui():
@@ -231,7 +231,7 @@ index dcba8e88..3f7880ec 100644
          with gr.Tabs(elem_id="tabs") as tabs:
              tab_order = {k: i for i, k in enumerate(opts.ui_tab_order)}
 diff --git a/modules/ui_gradio_extensions.py b/modules/ui_gradio_extensions.py
-index f5278d22..6f1a22b4 100644
+index f5278d22..5070bdb1 100644
 --- a/modules/ui_gradio_extensions.py
 +++ b/modules/ui_gradio_extensions.py
 @@ -1,5 +1,6 @@
@@ -250,7 +250,7 @@ index f5278d22..6f1a22b4 100644
          res.body = res.body.replace(b'</body>', f'{css}</body>'.encode("utf8"))
          res.init_headers()
 diff --git a/style.css b/style.css
-index 8ce78ff0..d17d2bcf 100644
+index 8ce78ff0..61eb3601 100644
 --- a/style.css
 +++ b/style.css
 @@ -9,6 +9,17 @@ div.gradio-image button[aria-label="Edit"] {
@@ -281,7 +281,7 @@ index 8ce78ff0..d17d2bcf 100644
  /* Buttons for files. */
  .extra-network-tree .tree-list-item--has-subitem .tree-list--subgroup > li:first-child {
 diff --git a/webui.py b/webui.py
-index 2c417168..f9b3b5f1 100644
+index 2c417168..2d9ac5a2 100644
 --- a/webui.py
 +++ b/webui.py
 @@ -93,6 +93,7 @@ def webui():

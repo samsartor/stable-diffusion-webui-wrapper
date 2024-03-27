@@ -1,0 +1,8 @@
+#!/usr/bin/env bash
+
+set -ex
+
+cd "$( dirname "$0")/stable-diffusion-webui"
+git format-patch startos-base..HEAD -N --stdout > ../webui.patch
+git checkout startos-base
+git tag --delete startos-base

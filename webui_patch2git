@@ -1,0 +1,10 @@
+#!/usr/bin/env bash
+
+set -ex
+
+cd "$( dirname "$0")/stable-diffusion-webui"
+git checkout --detach
+git branch --force startos
+git tag --force startos-base
+git checkout startos
+git am --ignore-whitespace ../webui.patch
